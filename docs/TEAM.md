@@ -6,4 +6,4 @@
 | Jordan | Senior Backend Engineer | Architecture, EF Core, code reviews |
 | Priya | Finance stakeholder | Billing rules (OF-102) |
 | Alex | SRE / on-call lead | Deployments, incidents, dashboards (OF-114) |
-| _(you)_ | Backend Engineer | _add yourself here in OF-101_ |
+| Jay | Backend Engineer | Implementation, Execution, PRs |
