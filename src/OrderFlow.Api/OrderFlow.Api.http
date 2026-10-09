@@ -1,0 +1,121 @@
+# Open this file in VS Code (REST Client / C# Dev Kit) or Rider/Visual Studio and click "Send Request".
+# Start the API first:  dotnet run --project src/OrderFlow.Api
+
+@host = http://localhost:5287
+
+### Version (minimal API)
+GET {{host}}/api/version
+
+### OpenAPI document
+GET {{host}}/openapi/v1.json
+
+############################## CUSTOMERS ##############################
+
+### List customers                       (OF-114: slow under load?)
+GET {{host}}/api/customers
+
+### Get a customer
+GET {{host}}/api/customers/1
+
+### Get a customer that doesn't exist     (OF-106: should be 404)
+GET {{host}}/api/customers/999
+
+### Create a customer
+POST {{host}}/api/customers
+Content-Type: application/json
+
+{
+  "name": "Margaret Hamilton",
+  "email": "margaret@example.com"
+}
+
+### Create a duplicate customer           (OF-107: should be 409)
+POST {{host}}/api/customers
+Content-Type: application/json
+
+{
+  "name": "Ada Again",
+  "email": "ada@example.com"
+}
+
+### Create an invalid customer            (OF-108: should be 400)
+POST {{host}}/api/customers
+Content-Type: application/json
+
+{
+  "name": "",
+  "email": "not-an-email"
+}
+
+### A customer's orders
+GET {{host}}/api/customers/1/orders
+
+############################## PRODUCTS ##############################
+
+### Page 1 of products                    (OF-104: should start at Widget 01)
+GET {{host}}/api/products?page=1&pageSize=10
+
+### Page 3 of products
+GET {{host}}/api/products?page=3&pageSize=10
+
+### Get one product
+GET {{host}}/api/products/1
+
+### Create a product
+POST {{host}}/api/products
+Content-Type: application/json
+
+{
+  "name": "Gadget Pro",
+  "price": 49.99,
+  "stockQuantity": 10
+}
+
+### Update a product
+PUT {{host}}/api/products/1
+Content-Type: application/json
+
+{
+  "name": "Widget 01 (v2)",
+  "price": 7.50,
+  "stockQuantity": 40,
+  "isActive": true
+}
+
+############################## ORDERS ##############################
+
+### Get an order                          (OF-102 / OF-103: items + total wrong)
+GET {{host}}/api/orders/1
+
+### Create an order
+POST {{host}}/api/orders
+Content-Type: application/json
+
+{
+  "customerId": 1,
+  "items": [
+    { "productId": 1, "quantity": 2 },
+    { "productId": 5, "quantity": 1 }
+  ]
+}
+
+### Order an out-of-stock product (Widget 07) (OF-109: should be 422)
+POST {{host}}/api/orders
+Content-Type: application/json
+
+{
+  "customerId": 1,
+  "items": [ { "productId": 7, "quantity": 1 } ]
+}
+
+### Pay for an order
+PATCH {{host}}/api/orders/1/status
+Content-Type: application/json
+
+{ "status": "Paid" }
+
+### Illegal transition: shipped -> pending (OF-105: should be 422)
+PATCH {{host}}/api/orders/2/status
+Content-Type: application/json
+
+{ "status": "Pending" }
