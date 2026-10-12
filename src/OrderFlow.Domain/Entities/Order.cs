@@ -16,7 +16,7 @@ public class Order
 
     public decimal CalculateTotal()
     {
-        return Items.Sum(i => i.UnitPrice);
+        return Items.Sum(i => i.UnitPrice * i.Quantity);
     }
 
     public void ChangeStatus(OrderStatus newStatus)
